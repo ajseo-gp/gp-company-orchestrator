@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# venv / uv
+.venv/
+.uv/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local experiment registry (runtime, redacted metadata only — never committed)
+var/
+*.sqlite
+*.sqlite3
+registry.json
+
+# OS / editor
+.DS_Store

@@ -1,0 +1,26 @@
+# promotion_rules.yaml
+# Policy data for the PROMOTE node. Enforcement lives in the graph code
+# (hermes_orchestrator.policy + nodes), NOT in any skill text.
+#
+# PROMOTE can ONLY produce an OS-change *candidate* after a verified success.
+# It NEVER writes to, edits, or claims a change in gp-company-os.
+#
+# Synthetic policy configuration only.
+
+version: 0.1.0
+
+# Promotion is allowed to mark a candidate only from this status.
+require_status: PREVIEW_READY
+
+# Promotion requires the VERIFY node to have recorded a verified success.
+require_verified: true
+
+# Hard invariants — asserted by the PROMOTE node at runtime.
+candidate_only: true          # output is a candidate, never an applied change
+never_write_os: true          # this layer never writes the OS SSOT
+os_changed_must_be_false: true # promotion payload must report os_changed=false
+
+# Where a human/CEO would later take the candidate. Reference only — this repo
+# does NOT open PRs, issues, or edits against it.
+os_change_target_repo: ajseo-gp/gp-company-os
+os_ref: 60bcdb2ec8ee88287e3664bf0b1b31a287fa246d

@@ -1,0 +1,46 @@
+# domain_router.yaml
+# Policy data for the ROUTE node. Enforcement lives in the graph code
+# (hermes_orchestrator.policy + nodes), NOT in any skill text.
+#
+# Precedence applied by the ROUTE node:
+#   1. CHECK_OS ACTIVE conflict  -> blocked CEO/OS gate
+#   2. OS domain                 -> CEO/OS gate
+#   3. any sensitive category    -> CEO/OS gate (no execution route)
+#   4. CHECK_OS ACTIVE aligned    -> experiment allowed
+#   5. fast_route match           -> APPROVED_FOR_EXPERIMENT fast lane
+#   6. no ACTIVE criterion        -> decide from risk + reversibility
+#
+# Synthetic policy configuration only. No real OS / customer / cost data.
+
+version: 0.1.0
+
+# OS domain is never executed here — it can only yield an OS-change candidate.
+ceo_os_gate:
+  domains: [OS]
+  # Any of these categories forces the CEO/OS gate regardless of domain/risk.
+  sensitive_categories:
+    - authorization
+    - automatic_publishing
+    - ad_claim_safety
+    - money_pricing
+    - customer_data
+    - production_state_transition
+    - agent_roles
+    - security
+    - external_permission_change
+
+# BRAND/CONTENT + LOW + reversible + small scope -> APPROVED_FOR_EXPERIMENT.
+fast_route:
+  domains: [BRAND, CONTENT]
+  max_risk: LOW
+  require_reversible: true
+  require_small_scope: true
+
+# Used when there is no ACTIVE OS criterion for the experiment.
+# Decide purely from risk + reversibility.
+risk_route:
+  # LOW or MEDIUM risk that is reversible -> experiment allowed.
+  allow_if:
+    max_risk: MEDIUM
+    require_reversible: true
+  # Everything else (HIGH risk, or irreversible) -> CEO/OS gate.
