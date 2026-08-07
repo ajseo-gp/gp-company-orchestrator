@@ -1,0 +1,34 @@
+[project]
+name = "gp-company-experiment-orchestrator"
+version = "0.1.0"
+description = "GP Company Experiment Orchestrator (Hermes) — LangGraph experiment layer over the read-only gp-company-os SSOT."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+authors = [{ name = "GP Company" }]
+dependencies = [
+    "langgraph>=0.2.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[project.scripts]
+hermes = "hermes_orchestrator.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hermes_orchestrator"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.uv]
+package = true

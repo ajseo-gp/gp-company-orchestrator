@@ -1,0 +1,38 @@
+# os_active_index.yaml
+# SYNTHETIC / REDACTED alignment index for the CHECK_OS node.
+#
+# This is NOT the OS and NOT the SSOT. gp-company-os (read-only, at the ref
+# below) remains the sole source of truth. This file holds only abstract,
+# non-sensitive topic tags used to decide whether an experiment is:
+#   - ALIGNED  with an ACTIVE OS criterion  -> can experiment
+#   - CONFLICT with an ACTIVE OS criterion  -> blocked CEO/OS gate
+#   - NONE     (no ACTIVE criterion applies) -> decide from risk+reversibility
+#
+# It intentionally contains NO real OS text, decisions, customer, recipe, or
+# cost data. Topic tags are coarse abstractions maintained by hand.
+
+version: 0.1.0
+os_ref: 60bcdb2ec8ee88287e3664bf0b1b31a287fa246d
+source_note: >-
+  Abstract, redacted mirror of a few ACTIVE OS stances. Not authoritative.
+  The authoritative OS is read-only at ajseo-gp/gp-company-os@os_ref.
+
+criteria:
+  - id: OSC-0001
+    label: revenue-first-growth
+    stance: ACTIVE
+    aligned_topics: [growth-experiment, brand-messaging-test, content-format-test]
+    conflict_topics: [pause-all-marketing, halt-growth-program]
+
+  - id: OSC-0002
+    label: human-preview-before-release
+    stance: ACTIVE
+    aligned_topics: [preview-gated-change]
+    # Automatic release without human preview conflicts with this ACTIVE stance.
+    conflict_topics: [auto-publish-without-preview, skip-human-preview]
+
+  - id: OSC-0003
+    label: research-production-control
+    stance: ACTIVE
+    aligned_topics: [bench-only-trial]
+    conflict_topics: [uncontrolled-production-change]

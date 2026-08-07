@@ -1,0 +1,37 @@
+# risk_matrix.yaml
+# Policy data for the CLASSIFY node. Enforcement lives in the graph code
+# (hermes_orchestrator.policy + nodes), NOT in any skill text.
+#
+# Risk = max(declared_or_domain_default, any triggered sensitive-category floor).
+# This file is synthetic policy configuration. It contains NO real OS content,
+# customer/recipe/cost data.
+
+version: 0.1.0
+
+levels: [LOW, MEDIUM, HIGH]
+
+default_risk: MEDIUM
+
+# Baseline risk when the intake does not declare one.
+domain_defaults:
+  WORKBENCH: MEDIUM
+  BRAND: LOW
+  CONTENT: LOW
+  AUTOMATION: MEDIUM
+  MANUFACTURING: HIGH
+  OEM: MEDIUM
+  INFRA: HIGH
+  OS: HIGH
+
+# A present sensitive category forces AT LEAST this risk level.
+# (These same categories also force a CEO/OS gate — see domain_router.yaml.)
+risk_floors:
+  authorization: HIGH
+  automatic_publishing: HIGH
+  ad_claim_safety: HIGH
+  money_pricing: HIGH
+  customer_data: HIGH
+  production_state_transition: HIGH
+  agent_roles: HIGH
+  security: HIGH
+  external_permission_change: HIGH
