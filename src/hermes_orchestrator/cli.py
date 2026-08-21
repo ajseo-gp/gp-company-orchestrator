@@ -20,7 +20,7 @@ from .enums import Domain, Risk
 from .graph import run_experiment
 from .models import ExperimentRequest
 from .registry import ExperimentRegistry
-from .production import boot_gentlepapa_ep02, route_contract
+from .production import boot_founder_story, route_contract
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -43,11 +43,15 @@ def _build_parser() -> argparse.ArgumentParser:
 
     prod = sub.add_parser("production", help="read-only production boot and routing checks")
     prod_sub = prod.add_subparsers(dest="production_cmd", required=True)
-    boot = prod_sub.add_parser("boot", help="validate the GentlePapa EP02 session boot gate")
+    boot = prod_sub.add_parser("boot", help="validate a production series session boot gate")
     boot.add_argument("--hub-root", required=True, help="local gp-company-hub checkout")
+    boot.add_argument("--series", default="founder-story", choices=["founder-story"])
+    boot.add_argument("--episode", default=None, help="optional EPxx override; defaults to SERIES-STATE")
     route = prod_sub.add_parser("route", help="validate and route one Execution Contract")
     route.add_argument("--hub-root", required=True, help="local gp-company-hub checkout")
     route.add_argument("--contract", required=True, help="Execution Contract YAML")
+    route.add_argument("--series", default="founder-story", choices=["founder-story"])
+    route.add_argument("--episode", default=None, help="optional EPxx override; defaults to SERIES-STATE")
     return p
 
 
@@ -75,9 +79,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     if args.cmd == "production":
         if args.production_cmd == "boot":
-            result = boot_gentlepapa_ep02(args.hub_root)
+            result = boot_founder_story(args.hub_root, args.episode, series=args.series)
         else:
-            result = route_contract(args.contract, args.hub_root)
+            result = route_contract(args.contract, args.hub_root, args.episode, series=args.series)
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0 if result.get("boot_status") == "READY" or result.get("status") == "ROUTED_DRY_RUN" else 2
 
