@@ -77,11 +77,16 @@ uv run hermes run --id EXP-0001 --title "brand headline A/B" \
     --topics brand-messaging-test
 
 # GentlePapa 제작 부팅은 로컬 Hub checkout을 읽기 전용으로 검증한다.
-uv run hermes production boot --hub-root ../gp-company-hub
+uv run hermes production boot --series founder-story --hub-root ../gp-company-hub
+
+# 특정 회차를 명시할 수도 있다.
+uv run hermes production boot --series founder-story --episode EP03 \
+    --hub-root ../gp-company-hub
 
 # READY 뒤 Atlas가 승인한 작은 계약 1개만 dry-run 라우팅한다.
-uv run hermes production route --hub-root ../gp-company-hub \
-    --contract ../gp-company-hub/brands/gentlepapa/production/founder-story/contracts/EP02-S04-I2V-003.yaml
+uv run hermes production route --series founder-story --episode EP03 \
+    --hub-root ../gp-company-hub \
+    --contract ../gp-company-hub/brands/gentlepapa/production/founder-story/EP03/contracts/EXECUTION-CONTRACT-TEMPLATE.yaml
 ```
 
 `production` 명령은 생성·외부 dispatch·Hub 쓰기를 수행하지 않는다. 필수 정본이나 근거가
