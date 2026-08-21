@@ -20,6 +20,7 @@ from .enums import Domain, Risk
 from .graph import run_experiment
 from .models import ExperimentRequest
 from .registry import ExperimentRegistry
+from .production import boot_gentlepapa_ep02, route_contract
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -39,6 +40,14 @@ def _build_parser() -> argparse.ArgumentParser:
                    help="simulate a successful dry-run outcome for VERIFY/PROMOTE")
     r.add_argument("--persist", default=None, metavar="PATH",
                    help="write a LOCAL redacted registry file (off by default)")
+
+    prod = sub.add_parser("production", help="read-only production boot and routing checks")
+    prod_sub = prod.add_subparsers(dest="production_cmd", required=True)
+    boot = prod_sub.add_parser("boot", help="validate the GentlePapa EP02 session boot gate")
+    boot.add_argument("--hub-root", required=True, help="local gp-company-hub checkout")
+    route = prod_sub.add_parser("route", help="validate and route one Execution Contract")
+    route.add_argument("--hub-root", required=True, help="local gp-company-hub checkout")
+    route.add_argument("--contract", required=True, help="Execution Contract YAML")
     return p
 
 
@@ -64,6 +73,14 @@ def _summary(state: dict[str, Any], *, persisted: bool) -> dict[str, Any]:
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = _build_parser().parse_args(argv)
 
+    if args.cmd == "production":
+        if args.production_cmd == "boot":
+            result = boot_gentlepapa_ep02(args.hub_root)
+        else:
+            result = route_contract(args.contract, args.hub_root)
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+        return 0 if result.get("boot_status") == "READY" or result.get("status") == "ROUTED_DRY_RUN" else 2
+
     outcome = {"success": True, "evidence": "dry-run simulated success"} if args.outcome_success else None
     request = ExperimentRequest(
         experiment_id=args.experiment_id,
@@ -86,3 +103,4 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
 if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())
+
