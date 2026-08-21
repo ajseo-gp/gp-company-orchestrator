@@ -75,7 +75,18 @@ uv run pytest -q             # run the test suite
 uv run hermes run --id EXP-0001 --title "brand headline A/B" \
     --domain BRAND --risk LOW --reversible --scope small \
     --topics brand-messaging-test
+
+# GentlePapa 제작 부팅은 로컬 Hub checkout을 읽기 전용으로 검증한다.
+uv run hermes production boot --hub-root ../gp-company-hub
+
+# READY 뒤 Atlas가 승인한 작은 계약 1개만 dry-run 라우팅한다.
+uv run hermes production route --hub-root ../gp-company-hub \
+    --contract ../gp-company-hub/brands/gentlepapa/production/founder-story/contracts/EP02-S04-I2V-003.yaml
 ```
+
+`production` 명령은 생성·외부 dispatch·Hub 쓰기를 수행하지 않는다. 필수 정본이나 근거가
+하나라도 없으면 종료 코드 2와 `BLOCKED`를 반환하며, 라우팅 결과의 다음 상태는 항상
+`ATLAS_REVIEW_REQUIRED`다.
 
 ## Operational boundaries
 
@@ -93,3 +104,4 @@ uv run hermes run --id EXP-0001 --title "brand headline A/B" \
 - **Do NOT** copy real customer / recipe / cost / credential data.
 - **Do NOT** merge or deploy from this layer.
 - **No network runtime behavior.**
+
